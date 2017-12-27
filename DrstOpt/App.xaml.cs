@@ -1,11 +1,6 @@
-﻿using DrstOpt.ViewModels;
+﻿using DrstOpt.Models;
+using DrstOpt.ViewModels;
 using DrstOpt.Views;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace DrstOpt
@@ -17,6 +12,11 @@ namespace DrstOpt
 	{
 		protected override void OnStartup(StartupEventArgs e) {
 			base.OnStartup(e);
+			// データベースを初期化
+			if (!DataStore.Initialize()) {
+				MessageBox.Show("エラー：データベースの初期化に失敗しました", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Error);
+				
+			}
 			// メイン画面を作成して表示する
 			var mv = new MainView();
 			var mvm = new MainViewModel();
