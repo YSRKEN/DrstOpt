@@ -62,11 +62,11 @@ namespace DrstOpt.Models
 			}
 			string message = $"計算時間：{allWallTime}[ms]";
 			message += $"\n合計アピール値：{bestAppealValue}";
-			message += $"\nセンター：{DataStore.IdolCardList[bestSelectedIdolIndex[0]].CardName}";
-			message += $"\n二番手：{DataStore.IdolCardList[bestSelectedIdolIndex[1]].CardName}";
-			message += $"\n三番手：{DataStore.IdolCardList[bestSelectedIdolIndex[2]].CardName}";
-			message += $"\n四番手：{DataStore.IdolCardList[bestSelectedIdolIndex[3]].CardName}";
-			message += $"\n五番手：{DataStore.IdolCardList[bestSelectedIdolIndex[4]].CardName}";
+			message += $"\nセンター：{DataStore.IdolCardList[bestSelectedIdolIndex[0]].CardInfo}";
+			message += $"\n二番手：{DataStore.IdolCardList[bestSelectedIdolIndex[1]].CardInfo}";
+			message += $"\n三番手：{DataStore.IdolCardList[bestSelectedIdolIndex[2]].CardInfo}";
+			message += $"\n四番手：{DataStore.IdolCardList[bestSelectedIdolIndex[3]].CardInfo}";
+			message += $"\n五番手：{DataStore.IdolCardList[bestSelectedIdolIndex[4]].CardInfo}";
 			MessageBox.Show(message, "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 		void OptimizeIdolUnitImpl(Attribute attribute, ref long wallTime, ref double appealValue, ref List<int> selectedIdolIndex) {

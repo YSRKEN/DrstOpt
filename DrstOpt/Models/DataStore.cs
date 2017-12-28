@@ -243,6 +243,12 @@ namespace DrstOpt.Models
 				}
 			}
 		}
+		// カード情報
+		public string CardInfo {
+			get {
+				return $"{CardName} ({Vocal},{Dance},{Visual}) <{CenterSkillAttribute} {CenterSkillType} {CenterSkillPower}>";
+			}
+		}
 		// レアリティ表示用文字列
 		private static string[] RealityString = { "N", "R", "SR", "SSR" };
 		// 属性表示用文字列
