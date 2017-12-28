@@ -177,6 +177,17 @@ namespace DrstOpt.Models
 			}
 			return haveCardFlg;
 		}
+		// 所持しているアイドルの一覧
+		public static List<IdolCard> HaveIdolCardList {
+			get {
+				var haveIdolCardList = new List<IdolCard>();
+				for(int i = 0; i < IdolCardList.Count; ++i) {
+					if (HaveCardFlg[i])
+						haveIdolCardList.Add(IdolCardList[i]);
+				}
+				return haveIdolCardList;
+			}
+		}
 	}
 	// アイドルカード
 	struct IdolCard {
