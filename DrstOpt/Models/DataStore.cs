@@ -47,7 +47,7 @@ namespace DrstOpt.Models
 			// SQLを唱えて結果を取得する
 			string connectionString = $"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={folderPath}\\IdolDB.accdb;Uid=admin;Pwd=;";
 			Console.WriteLine(connectionString);
-			string queryString = "SELECT Rarity,NickName,IdolName,IdolType,Vo,Da,Vi FROM IdolList";
+			string queryString = "SELECT * FROM IdolList";
 			var dt = new DataTable();
 			using (var connection = new OdbcConnection(connectionString)) {
 				connection.Open();
@@ -65,6 +65,21 @@ namespace DrstOpt.Models
 					{ "キュート", Attribute.Cute },
 					{ "クール", Attribute.Cool },
 					{ "パッション", Attribute.Passion },
+					{ "全タイプ", Attribute.All },
+					{ "Cuプリンセス", Attribute.CuteP },
+					{ "Coプリンセス", Attribute.CoolP },
+					{ "Paプリンセス", Attribute.PassionP },
+					{ "トリコロール", Attribute.Tricolore },
+					{ "", Attribute.None },
+				};
+			var csTable = new Dictionary<string, CSType> {
+					{ "全アピール", CSType.All },
+					{ "ボーカル", CSType.Vocal },
+					{ "ダンス", CSType.Dance },
+					{ "ビジュアル", CSType.Visual },
+					{ "特技発動率", CSType.Skill },
+					{ "ライフ", CSType.Life },
+					{ "", CSType.None },
 				};
 			idolCardIndex = new Dictionary<string, int>();
 			var idolCardList = dt.Select().Select(r => {
@@ -76,10 +91,16 @@ namespace DrstOpt.Models
 				decimal vocal = r.Field<decimal>("Vo");
 				decimal dance = r.Field<decimal>("Da");
 				decimal visual = r.Field<decimal>("Vi");
+				Attribute centerSkillAttribute = attributeTable[(r.Field<string>("SklType") ?? "")];
+				CSType centerSkillType = csTable[(r.Field<string>("SklTgt") ?? "")];
+				decimal centerSkillPower = (r.Field<decimal?>("SklEff").HasValue ? r.Field<decimal?>("SklEff").Value : 0);
 				// 結果を構造体に包んで返す
 				return new IdolCard {
 					IdolName = idolName, Situation = situation, Reality = reality,
-					Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual
+					Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual,
+					CenterSkillAttribute = centerSkillAttribute,
+					CenterSkillType = centerSkillType,
+					CenterSkillPower = centerSkillPower
 				};
 			}).ToList();
 			for(int i = 0; i < idolCardList.Count; ++i) {
@@ -173,6 +194,12 @@ namespace DrstOpt.Models
 		public decimal Dance;
 		// カードのVisual値
 		public decimal Visual;
+		// センター効果の属性
+		public Attribute CenterSkillAttribute;
+		// センター効果の種類
+		public CSType CenterSkillType;
+		// センター効果の性能
+		public decimal CenterSkillPower;
 
 		// カードの名前
 		public string CardName {
@@ -213,6 +240,8 @@ namespace DrstOpt.Models
 	// アイドルカードのレアリティ
 	// 暗黙の仮定として、全て特訓済みのカード(N+、SSR+など)だとする
 	enum Reality { N, R, SR, SSR }
-	// アイドル/楽曲の属性
-	enum Attribute { All, Cute, Cool, Passion }
+	// アイドル/楽曲/センター効果の属性
+	enum Attribute { All, Cute, Cool, Passion, CuteP, CoolP, PassionP, Tricolore, None }
+	// センター効果の種類
+	enum CSType { All, Vocal, Dance, Visual, Skill, Life, None }
 }
