@@ -214,5 +214,5 @@ namespace DrstOpt.Models
 	// 暗黙の仮定として、全て特訓済みのカード(N+、SSR+など)だとする
 	enum Reality { N, R, SR, SSR }
 	// アイドル/楽曲の属性
-	enum Attribute { Cute, Cool, Passion, All }
+	enum Attribute { All, Cute, Cool, Passion }
 }

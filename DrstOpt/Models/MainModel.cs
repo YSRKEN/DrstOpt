@@ -56,9 +56,37 @@ namespace DrstOpt.Models
 				// 目的関数の係数
 				for (int n = 0; n < N; ++n) {
 					var idolCard = DataStore.IdolCardList[n];
-					decimal idolPower = idolCard.Vocal + idolCard.Dance + idolCard.Visual;
+					double idolPower = (double)(idolCard.Vocal + idolCard.Dance + idolCard.Visual);
+					double idolPower2 = Math.Round((double)idolCard.Vocal * 1.3)
+						+ Math.Round((double)idolCard.Dance * 1.3)
+						+ Math.Round((double)idolCard.Visual * 1.3);
 					for (int m = 0; m < M; ++m) {
-						objective.SetCoefficient(x[n,m], (double)idolPower);
+						switch (attribute) {
+						case Attribute.All:
+							objective.SetCoefficient(x[n, m], idolPower2);
+							break;
+						case Attribute.Cute:
+							if (idolCard.Attribute == Attribute.Cute) {
+								objective.SetCoefficient(x[n, m], idolPower2);
+							} else {
+								objective.SetCoefficient(x[n, m], idolPower);
+							}
+							break;
+						case Attribute.Cool:
+							if (idolCard.Attribute == Attribute.Cool) {
+								objective.SetCoefficient(x[n, m], idolPower2);
+							} else {
+								objective.SetCoefficient(x[n, m], idolPower);
+							}
+							break;
+						case Attribute.Passion:
+							if (idolCard.Attribute == Attribute.Passion) {
+								objective.SetCoefficient(x[n, m], idolPower2);
+							} else {
+								objective.SetCoefficient(x[n, m], idolPower);
+							}
+							break;
+						}
 					}
 				}
 
@@ -93,12 +121,12 @@ namespace DrstOpt.Models
 					}
 				}
 				string message = $"計算時間：{solver.WallTime()}[ms]";
-				message += $"\n合計発揮値：{solver.Objective().Value()}";
+				message += $"\n合計アピール値：{solver.Objective().Value()}";
 				message += $"\nセンター：{DataStore.IdolCardList[SelectedIdolIndex[0]].CardName}";
-				message += $"\n　二番手：{DataStore.IdolCardList[SelectedIdolIndex[1]].CardName}";
-				message += $"\n　三番手：{DataStore.IdolCardList[SelectedIdolIndex[2]].CardName}";
-				message += $"\n　四番手：{DataStore.IdolCardList[SelectedIdolIndex[3]].CardName}";
-				message += $"\n　五番手：{DataStore.IdolCardList[SelectedIdolIndex[4]].CardName}";
+				message += $"\n二番手：{DataStore.IdolCardList[SelectedIdolIndex[1]].CardName}";
+				message += $"\n三番手：{DataStore.IdolCardList[SelectedIdolIndex[2]].CardName}";
+				message += $"\n四番手：{DataStore.IdolCardList[SelectedIdolIndex[3]].CardName}";
+				message += $"\n五番手：{DataStore.IdolCardList[SelectedIdolIndex[4]].CardName}";
 				MessageBox.Show(message, "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
 		}
