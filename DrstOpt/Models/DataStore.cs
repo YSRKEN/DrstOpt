@@ -2,58 +2,159 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace DrstOpt.Models
 {
 	// データベース
 	static class DataStore
 	{
+		// アイドル名の一覧
 		public static List<IdolCard> IdolCardList { get; private set; }
+		// アイドル名→インデックスへの変換
+		public static Dictionary<string, int> IdolCardIndex { get; private set; }
+		// アイドルを所持しているかのフラグ
+		public static List<bool> HaveCardFlg { get; private set; }
+		// フォルダパス
+		private static string folderPath = @"F:\ソフトウェア\パズル・ゲーム\PC\デレステ計算機\Ver3系";
+
 		// 初期化
 		public static bool Initialize() {
-			const string folderPath = @"F:\ソフトウェア\パズル・ゲーム\PC\デレステ計算機\Ver3系";
-			// アイドル名の一覧を読み込む
+			// ファイル読み込み
 			try {
-				// SQLを唱えて結果を取得する
-				string connectionString = $"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={folderPath}\\IdolDB.accdb;Uid=admin;Pwd=;";
-				Console.WriteLine(connectionString);
-				string queryString = "SELECT Rarity,NickName,IdolName,IdolType,Vo,Da,Vi FROM IdolList";
-				var dt = new DataTable();
-				using (var connection = new OdbcConnection(connectionString)) {
-					connection.Open();
-					var adapter = new OdbcDataAdapter(queryString, connection);
-					adapter.Fill(dt);
+				// アイドル名の一覧を読み込む
+				Dictionary<string, int> idolCardIndex = null;
+				IdolCardList = ReadIdolCardList(out idolCardIndex);
+				IdolCardIndex = idolCardIndex;
+				// 所持しているアイドルの一覧を読み込む
+				List<IdolCard> extCardList = null;
+				HaveCardFlg = ReadHaveCardList(out extCardList);
+				foreach(var idolCard in extCardList) {
+					IdolCardIndex[idolCard.CardName2] = IdolCardList.Count;
+					IdolCardList.Add(idolCard);
 				}
-				// アイドルのカード一覧として解釈する
-				var realityTable = new Dictionary<string, Reality> {
-					{ "N", Reality.N },
-					{ "R", Reality.R },
-					{ "SR", Reality.SR },
-					{ "SSR", Reality.SSR },
-				};
-				var attributeTable = new Dictionary<string, Attribute> {
-					{ "キュート", Attribute.Cute },
-					{ "クール", Attribute.Cool },
-					{ "パッション", Attribute.Passion },
-				};
-				IdolCardList = dt.Select().Select(r => {
-					string idolName = r.Field<string>("IdolName");
-					string situation = (r.Field<string>("NickName") ?? "").Replace("[", "").Replace("]", "");
-					Reality reality = realityTable[r.Field<string>("Rarity")];
-					Attribute attribute = attributeTable[r.Field<string>("IdolType")];
-					decimal vocal = r.Field<decimal>("Vo");
-					decimal dance = r.Field<decimal>("Da");
-					decimal visual = r.Field<decimal>("Vi");
-					return new IdolCard {
-						IdolName = idolName, Situation = situation, Reality = reality,
-						Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual };
-				}).ToList();
 			} catch(Exception ex) {
 				Console.WriteLine(ex.ToString());
 				return false;
 			}
 			return true;
+		}
+		// アイドル名の一覧を読み込む
+		// refには、アイドル名→インデックスへの変換操作を行わせる
+		private static List<IdolCard> ReadIdolCardList(out Dictionary<string, int> idolCardIndex) {
+			// SQLを唱えて結果を取得する
+			string connectionString = $"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={folderPath}\\IdolDB.accdb;Uid=admin;Pwd=;";
+			Console.WriteLine(connectionString);
+			string queryString = "SELECT Rarity,NickName,IdolName,IdolType,Vo,Da,Vi FROM IdolList";
+			var dt = new DataTable();
+			using (var connection = new OdbcConnection(connectionString)) {
+				connection.Open();
+				var adapter = new OdbcDataAdapter(queryString, connection);
+				adapter.Fill(dt);
+			}
+			// アイドルのカード一覧として解釈する
+			var realityTable = new Dictionary<string, Reality> {
+					{ "N", Reality.N },
+					{ "R", Reality.R },
+					{ "SR", Reality.SR },
+					{ "SSR", Reality.SSR },
+				};
+			var attributeTable = new Dictionary<string, Attribute> {
+					{ "キュート", Attribute.Cute },
+					{ "クール", Attribute.Cool },
+					{ "パッション", Attribute.Passion },
+				};
+			idolCardIndex = new Dictionary<string, int>();
+			var idolCardList = dt.Select().Select(r => {
+				// レコードから各項目を読み取る
+				string idolName = r.Field<string>("IdolName");
+				string situation = (r.Field<string>("NickName") ?? "").Replace("[", "").Replace("]", "").Replace("［", "").Replace("］", "");
+				Reality reality = realityTable[r.Field<string>("Rarity")];
+				Attribute attribute = attributeTable[r.Field<string>("IdolType")];
+				decimal vocal = r.Field<decimal>("Vo");
+				decimal dance = r.Field<decimal>("Da");
+				decimal visual = r.Field<decimal>("Vi");
+				// 結果を構造体に包んで返す
+				return new IdolCard {
+					IdolName = idolName, Situation = situation, Reality = reality,
+					Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual
+				};
+			}).ToList();
+			for(int i = 0; i < idolCardList.Count; ++i) {
+				idolCardIndex[idolCardList[i].CardName2] = i;
+				idolCardIndex[idolCardList[i].CardName3] = i;
+			}
+			return idolCardList;
+		}
+		// 所持しているアイドルの一覧を読み込む
+		private static List<bool> ReadHaveCardList(out List<IdolCard> extCardList) {
+			// メモリ割り当て
+			var haveCardFlg = new List<bool>();
+			extCardList = new List<IdolCard>();
+			// ファイル読み込み
+			var textData = new List<List<string>>();
+			using (var sr = new StreamReader($"{folderPath}\\IdolData.txt", Encoding.GetEncoding("shift_jis"))) {
+				while (sr.Peek() > -1) {
+					// 冒頭の文字列・カンマで区切った数によって分岐
+					string getLine = sr.ReadLine();
+					var splitedData = getLine.Split(",".ToCharArray()).ToList();
+					if (splitedData.Count == 4) {
+						// 1列目が「Master」ならば、マスターデータから引っ張れるはず
+						if(splitedData[0] == "Master") {
+							textData.Add(splitedData);
+							haveCardFlg.Add(false);
+						}
+					} else {
+						// 1列目が「User」ならば、ユーザーが作成したアイドルカードデータなはず
+						if (splitedData[0] == "User") {
+							textData.Add(splitedData);
+							haveCardFlg.Add(false);
+						}
+					}
+				}
+			}
+			// 読み込んだデータを分析する
+			var realityTable = new Dictionary<string, Reality> {
+					{ "N", Reality.N },
+					{ "R", Reality.R },
+					{ "SR", Reality.SR },
+					{ "SSR", Reality.SSR },
+				};
+			var attributeTable = new Dictionary<string, Attribute> {
+					{ "キュート", Attribute.Cute },
+					{ "クール", Attribute.Cool },
+					{ "パッション", Attribute.Passion },
+				};
+			int masterCardListCount = textData.Count(r => r.Count == 4);
+			foreach (var splitedData in textData) {
+				if (splitedData.Count == 4) {
+					// マスターデータ
+					int cardCount = int.Parse(splitedData[2]);
+					if (cardCount > 0)
+						haveCardFlg[IdolCardIndex[splitedData[1]]] = true;
+				} else {
+					// ユーザーデータ
+					string idolName = splitedData[6];
+					string situation = splitedData[5];
+					Reality reality = realityTable[splitedData[4]];
+					Attribute attribute = attributeTable[splitedData[7]];
+					decimal vocal = int.Parse(splitedData[24]);
+					decimal dance = int.Parse(splitedData[25]);
+					decimal visual = int.Parse(splitedData[26]);
+					// 結果を構造体に包んで返す
+					var card = new IdolCard {
+						IdolName = idolName, Situation = situation, Reality = reality,
+						Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual
+					};
+					int cardCount = int.Parse(splitedData[8]);
+					if (cardCount > 0)
+						haveCardFlg[masterCardListCount + extCardList.Count] = true;
+					extCardList.Add(card);
+				}
+			}
+			return haveCardFlg;
 		}
 	}
 	// アイドルカード
@@ -83,8 +184,29 @@ namespace DrstOpt.Models
 				}
 			}
 		}
+		// カードの名前(IdolData.txt用)
+		public string CardName2 {
+			get {
+				if (Situation != "") {
+					return $"{RealityString[(int)Reality]}[{Situation}]{IdolName}";
+				} else {
+					return $"{RealityString[(int)Reality]}{IdolName}";
+				}
+			}
+		}
+		public string CardName3 {
+			// どういうわけか、［Trinity Field］神谷奈緒と［Trinity Field］北条加蓮だけ
+			// マスターデータの大カッコが全角なので、その対策
+			get {
+				if (Situation != "") {
+					return $"{RealityString[(int)Reality]}［{Situation}］{IdolName}";
+				} else {
+					return $"{RealityString[(int)Reality]}{IdolName}";
+				}
+			}
+		}
 		// レアリティ表示用文字列
-		private static string[] RealityString = { "N+", "R+", "SR+", "SSR+" };
+		private static string[] RealityString = { "N", "R", "SR", "SSR" };
 		// 属性表示用文字列
 		private static string[] AttributeString = { "Cute", "Cool", "Passion" };
 	}
