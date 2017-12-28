@@ -15,7 +15,7 @@ namespace DrstOpt
 			// データベースを初期化
 			if (!DataStore.Initialize()) {
 				MessageBox.Show("エラー：データベースの初期化に失敗しました", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Error);
-				
+				Shutdown();
 			}
 			// メイン画面を作成して表示する
 			var mv = new MainView();
