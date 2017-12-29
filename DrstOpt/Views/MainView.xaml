@@ -37,12 +37,24 @@
 				<Grid Grid.Row="1">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="auto"/>
-						<ColumnDefinition/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
 					</Grid.ColumnDefinitions>
 					<TextBlock Grid.Column="0" Text="曲の属性" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" />
 					<ComboBox Grid.Column="1" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 						ItemsSource="{Binding MusicAttributeList}"
 						SelectedIndex="{Binding MusicAttributeIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<CheckBox Grid.Column="2" Content="回復" Margin="5,5,5,5" VerticalAlignment="Center"
+							IsChecked="{Binding IncludeLifeRecoveryFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<CheckBox Grid.Column="3" Content="ダメガ" Margin="5,5,5,5" VerticalAlignment="Center"
+							IsChecked="{Binding IncludeDamageGuardFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<CheckBox Grid.Column="4" Content="コンセ禁止" Margin="5,5,5,5" VerticalAlignment="Center"
+							IsChecked="{Binding ExcludeConcentrationFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<CheckBox Grid.Column="5" Content="オバロ禁止" Margin="5,5,5,5" VerticalAlignment="Center"
+							IsChecked="{Binding ExcludeOverloadFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				</Grid>
 			</Grid>
 		</GroupBox>

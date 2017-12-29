@@ -11,14 +11,27 @@ namespace DrstOpt.ViewModels
 	{
 		private MainModel mainModel = new MainModel();
 
+		// 属性一覧
+		public List<string> MusicAttributeList { get; } = new List<string> { "全体曲", "キュート", "クール", "パッション" };
+
 		// 読み込み先フォルダのパス設定
 		public ReactiveProperty<string> SoftwareFolderPath { get; private set; }
 			= new ReactiveProperty<string>(Settings.Default.SoftwareFolderPath);
 		// 最適化したい曲の属性
 		public ReactiveProperty<int> MusicAttributeIndex { get; private set; }
 			= new ReactiveProperty<int>(Settings.Default.MusicAttributeIndex);
-		// 属性一覧
-		public List<string> MusicAttributeList { get; } = new List<string> { "全体曲", "キュート", "クール", "パッション" };
+		// 回復を積むか？
+		public ReactiveProperty<bool> IncludeLifeRecoveryFlg { get; private set; }
+			= new ReactiveProperty<bool>(Settings.Default.IncludeLifeRecoveryFlg);
+		// ダメガを積むか？
+		public ReactiveProperty<bool> IncludeDamageGuardFlg { get; private set; }
+			= new ReactiveProperty<bool>(Settings.Default.IncludeDamageGuardFlg);
+		// コンセを禁止するか？
+		public ReactiveProperty<bool> ExcludeConcentrationFlg { get; private set; }
+			= new ReactiveProperty<bool>(Settings.Default.ExcludeConcentrationFlg);
+		// オバロを禁止するか？
+		public ReactiveProperty<bool> ExcludeOverloadFlg { get; private set; }
+			= new ReactiveProperty<bool>(Settings.Default.ExcludeOverloadFlg);
 		// データを読み込めたか？
 		public ReactiveProperty<bool> ReadDataFlg { get; private set; } = new ReactiveProperty<bool>(false);
 		// 実行ログ
@@ -36,8 +49,28 @@ namespace DrstOpt.ViewModels
 
 		public MainViewModel() {
 			// コマンドを設定
+			IncludeLifeRecoveryFlg.Subscribe(_ => {
+				AddLogText($"回復を積むか？：{IncludeLifeRecoveryFlg.Value}");
+				Settings.Default.IncludeLifeRecoveryFlg = IncludeLifeRecoveryFlg.Value;
+				Settings.Default.Save();
+			});
+			IncludeDamageGuardFlg.Subscribe(_ => {
+				AddLogText($"ダメガを積むか？：{IncludeDamageGuardFlg.Value}");
+				Settings.Default.IncludeDamageGuardFlg = IncludeDamageGuardFlg.Value;
+				Settings.Default.Save();
+			});
+			ExcludeConcentrationFlg.Subscribe(_ => {
+				AddLogText($"コンセを禁止するか？：{ExcludeConcentrationFlg.Value}");
+				Settings.Default.ExcludeConcentrationFlg = ExcludeConcentrationFlg.Value;
+				Settings.Default.Save();
+			});
+			ExcludeOverloadFlg.Subscribe(_ => {
+				AddLogText($"オバロを禁止するか？：{ExcludeOverloadFlg.Value}");
+				Settings.Default.ExcludeOverloadFlg = ExcludeOverloadFlg.Value;
+				Settings.Default.Save();
+			});
 			MusicAttributeIndex.Subscribe(_ => {
-				AddLogText($"属性変更：{MusicAttributeList[MusicAttributeIndex.Value]}");
+				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				Settings.Default.MusicAttributeIndex = MusicAttributeIndex.Value;
 				Settings.Default.Save();
 			});

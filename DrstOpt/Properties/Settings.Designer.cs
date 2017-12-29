@@ -46,5 +46,53 @@ namespace DrstOpt.Properties {
                 this["MusicAttributeIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IncludeLifeRecoveryFlg {
+            get {
+                return ((bool)(this["IncludeLifeRecoveryFlg"]));
+            }
+            set {
+                this["IncludeLifeRecoveryFlg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IncludeDamageGuardFlg {
+            get {
+                return ((bool)(this["IncludeDamageGuardFlg"]));
+            }
+            set {
+                this["IncludeDamageGuardFlg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExcludeConcentrationFlg {
+            get {
+                return ((bool)(this["ExcludeConcentrationFlg"]));
+            }
+            set {
+                this["ExcludeConcentrationFlg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExcludeOverloadFlg {
+            get {
+                return ((bool)(this["ExcludeOverloadFlg"]));
+            }
+            set {
+                this["ExcludeOverloadFlg"] = value;
+            }
+        }
     }
 }
