@@ -50,9 +50,9 @@ namespace DrstOpt.ViewModels
 				}
 			});
 			OptimizeCommand = ReadDataFlg.ToReactiveCommand();
-			OptimizeCommand.Subscribe(() => {
+			OptimizeCommand.Subscribe(async () => {
 				AddLogText("最適化開始...");
-				string optimizedLog = mainModel.OptimizeIdolUnit((Attribute)MusicAttributeIndex.Value);
+				string optimizedLog = await mainModel.OptimizeIdolUnitAsync((Attribute)MusicAttributeIndex.Value);
 				AddLogText("最適化完了");
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				AddLogText(optimizedLog);

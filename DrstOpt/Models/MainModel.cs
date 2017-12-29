@@ -3,12 +3,16 @@ using System;
 using System.Windows;
 using Google.OrTools.LinearSolver;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DrstOpt.Models
 {
 	class MainModel : BindableBase
 	{
 		// 最適化処理を行い、結果をダイアログで表示する
+		public Task<string> OptimizeIdolUnitAsync(Attribute attribute) {
+			return Task.Run(() => OptimizeIdolUnit(attribute));
+		}
 		public string OptimizeIdolUnit(Attribute attribute) {
 			// 最適化処理を行い、結果をダイアログで表示する
 			// 解きたい数式の概要：

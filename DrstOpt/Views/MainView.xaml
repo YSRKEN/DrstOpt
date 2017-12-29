@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:DrstOpt.ViewModels"
 	mc:Ignorable="d"
-	Title="デレステ編成最適化" Height="400" Width="400">
+	Title="デレステ編成最適化" Height="400" Width="500">
 	<Window.DataContext>
 		<local:MainViewModel/>
 	</Window.DataContext>
