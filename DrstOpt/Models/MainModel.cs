@@ -123,6 +123,11 @@ namespace DrstOpt.Models
 				var e_cu = solver.MakeConstraint((centerCard.CenterSkillAttribute == Attribute.Tricolore ? 1.0 : 0.0), double.PositiveInfinity, "e_cu");
 				var e_co = solver.MakeConstraint((centerCard.CenterSkillAttribute == Attribute.Tricolore ? 1.0 : 0.0), double.PositiveInfinity, "e_co");
 				var e_pa = solver.MakeConstraint((centerCard.CenterSkillAttribute == Attribute.Tricolore ? 1.0 : 0.0), double.PositiveInfinity, "e_pa");
+				// 回復・ダメガ・コンセ・オバロに関する制約
+				var e_member_life = solver.MakeConstraint((config.IncludeLifeRecoveryFlg ? 1.0 : 0.0), double.PositiveInfinity, "e_member_life");
+				var e_member_dmg  = solver.MakeConstraint((config.IncludeDamageGuardFlg ? 1.0 : 0.0), double.PositiveInfinity, "e_member_dmg");
+				var e_member_cons = solver.MakeConstraint(0.0, (config.ExcludeConcentrationFlg ? 0.0 : double.PositiveInfinity), "e_member_cons");
+				var e_member_over = solver.MakeConstraint(0.0, (config.ExcludeOverloadFlg ? 0.0 : double.PositiveInfinity), "e_member_over");
 
 				// 目的関数の係数
 				for (int n = 0; n < N; ++n) {
@@ -196,6 +201,26 @@ namespace DrstOpt.Models
 								e_pa.SetCoefficient(x[n, m], 1.0);
 								break;
 							}
+						}
+					}
+				}
+				for (int n = 0; n < N; ++n) {
+					var idolCard = DataStore.IdolCardList[n];
+					for (int m = 0; m < M; ++m) {
+						switch (idolCard.Ability) {
+						case Ability.Life:
+						case Ability.All:
+							e_member_life.SetCoefficient(x[n, m], 1.0);
+							break;
+						case Ability.Damage:
+							e_member_dmg.SetCoefficient(x[n, m], 1.0);
+							break;
+						case Ability.Cons:
+							e_member_cons.SetCoefficient(x[n, m], 1.0);
+							break;
+						case Ability.Over:
+							e_member_over.SetCoefficient(x[n, m], 1.0);
+							break;
 						}
 					}
 				}

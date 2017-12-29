@@ -6,7 +6,7 @@
 	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 	xmlns:local="clr-namespace:DrstOpt.ViewModels"
 	mc:Ignorable="d"
-	Title="デレステ編成最適化" Height="400" Width="500">
+	Title="デレステ編成最適化" Height="400" Width="600">
 	<Window.DataContext>
 		<local:MainViewModel/>
 	</Window.DataContext>

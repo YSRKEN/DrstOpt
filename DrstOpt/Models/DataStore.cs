@@ -77,6 +77,22 @@ namespace DrstOpt.Models
 					{ "ライフ", CSType.Life },
 					{ "", CSType.None },
 				};
+			var abilityTable = new Dictionary<string, Ability> {
+				{ "スコアアップ", Ability.Score},
+				{ "コンボボーナス", Ability.ComboB},
+				{ "オーバーロード", Ability.Over},
+				{ "判定強化", Ability.Judge},
+				{ "コンボ継続", Ability.ComboR},
+				{ "ライフ回復", Ability.Life},
+				{ "ダメージガード", Ability.Damage},
+				{ "オールラウンド", Ability.All},
+				{ "コンセントレーション", Ability.Cons},
+				{ "スキルブースト", Ability.Skill},
+				{ "キュートフォーカス", Ability.CuteF},
+				{ "クールフォーカス", Ability.CoolF},
+				{ "パッションフォーカス", Ability.PassionF},
+				{ "", Ability.None }
+			};
 			idolCardIndex = new Dictionary<string, int>();
 			var idolCardList = dt.Select().Select(r => {
 				// レコードから各項目を読み取る
@@ -90,13 +106,15 @@ namespace DrstOpt.Models
 				Attribute centerSkillAttribute = attributeTable[(r.Field<string>("SklType") ?? "")];
 				CSType centerSkillType = csTable[(r.Field<string>("SklTgt") ?? "")];
 				decimal centerSkillPower = (r.Field<decimal?>("SklEff") ?? 0);
+				Ability ability = abilityTable[r.Field<string>("AblTgt") ?? ""];
 				// 結果を構造体に包んで返す
 				return new IdolCard {
 					IdolName = idolName, Situation = situation, Reality = reality,
 					Attribute = attribute, Vocal = vocal, Dance = dance, Visual = visual,
 					CenterSkillAttribute = centerSkillAttribute,
 					CenterSkillType = centerSkillType,
-					CenterSkillPower = centerSkillPower
+					CenterSkillPower = centerSkillPower,
+					Ability = ability
 				};
 			}).ToList();
 			for(int i = 0; i < idolCardList.Count; ++i) {
@@ -207,6 +225,8 @@ namespace DrstOpt.Models
 		public CSType CenterSkillType;
 		// センター効果の性能
 		public decimal CenterSkillPower;
+		// 特技の種類
+		public Ability Ability;
 
 		// カードの名前
 		public string CardName {
@@ -242,7 +262,7 @@ namespace DrstOpt.Models
 		// カード情報
 		public string CardInfo {
 			get {
-				return $"{CardName} ({Vocal},{Dance},{Visual}) <{CenterSkillAttribute} {CenterSkillType} {CenterSkillPower}>";
+				return $"{CardName} ({Vocal},{Dance},{Visual}) <{CenterSkillAttribute} {CenterSkillType} {CenterSkillPower}> <{Ability}>";
 			}
 		}
 		// レアリティ表示用文字列
@@ -257,4 +277,11 @@ namespace DrstOpt.Models
 	enum Attribute { All, Cute, Cool, Passion, CuteP, CoolP, PassionP, Tricolore, None }
 	// センター効果の種類
 	enum CSType { All, Vocal, Dance, Visual, Skill, Life, None }
+	// 特技の種類
+	// スコアアップ・コンボボーナス・オーバーロード・判定強化・コンボ継続・
+	// ライフ回復・ダメージガード・オールラウンド・コンセントレーション・
+	// スキルブースト・キュートフォーカス・クールフォーカス・パッションフォーカス
+	enum Ability {
+		Score, ComboB, Over, Judge, ComboR, Life, Damage, All,
+		Cons, Skill, CuteF, CoolF, PassionF, None }
 }
