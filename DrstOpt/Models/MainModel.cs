@@ -3,12 +3,12 @@ using System;
 using System.Windows;
 using Google.OrTools.LinearSolver;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DrstOpt.Models
 {
 	class MainModel : BindableBase
 	{
+		// 最適化処理を行い、結果をダイアログで表示する
 		public void OptimizeIdolUnit(Attribute attribute) {
 			// 最適化処理を行い、結果をダイアログで表示する
 			// 解きたい数式の概要：
@@ -305,6 +305,22 @@ namespace DrstOpt.Models
 				appealValue = solver.Objective().Value();
 				return;
 			}
+		}
+		// フォルダパスを参照する
+		public string BrowseSoftwareFolderPath(string startPath) {
+			var fbd = new System.Windows.Forms.FolderBrowserDialog {
+				Description = "「デレステ計算機」のフォルダを指定",
+				SelectedPath = startPath
+			};
+			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+				return fbd.SelectedPath;
+			} else {
+				return startPath;
+			}
+		}
+		// 変更したフォルダパスをDataStore側に反映する
+		public void SetFolderPath(string folderPath) {
+
 		}
 	}
 }

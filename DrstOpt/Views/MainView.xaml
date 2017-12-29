@@ -5,34 +5,60 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:DrstOpt.ViewModels"
 	mc:Ignorable="d"
-	Title="デレステ編成最適化" Height="300" Width="300">
+	Title="デレステ編成最適化" Height="300" Width="400">
 	<Window.DataContext>
 		<local:MainViewModel/>
 	</Window.DataContext>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto"/>
 			<RowDefinition Height="auto"/>
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<GroupBox Grid.Row="0" Header="オプション" Margin="5,5,5,5">
 			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Grid.Column="0" Text="曲の属性" Margin="5,5,5,5" HorizontalAlignment="Right" VerticalAlignment="Center" />
-				<ComboBox Grid.Column="1" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-					SelectedIndex="{Binding MusicAttributeIndex.Value}">
-					<ComboBoxItem Content="全体曲"/>
-					<ComboBoxItem Content="キュート"/>
-					<ComboBoxItem Content="クール"/>
-					<ComboBoxItem Content="パッション"/>
-				</ComboBox>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="auto"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Column="0" Text="フォルダパス" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+					<TextBox Grid.Column="1" Height="24" Margin="5,5,5,5"
+							Text="{Binding SoftwareFolderPath.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<Button Grid.Column="2" Content="参照..." Width="80" Height="24" Margin="5,5,5,5"
+							Command="{Binding BrowseSoftwareFolderPathCommand}"/>
+				</Grid>
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Column="0" Text="曲の属性" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+					<ComboBox Grid.Column="1" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+						SelectedIndex="{Binding MusicAttributeIndex.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+						<ComboBoxItem Content="全体曲"/>
+						<ComboBoxItem Content="キュート"/>
+						<ComboBoxItem Content="クール"/>
+						<ComboBoxItem Content="パッション"/>
+					</ComboBox>
+				</Grid>
 			</Grid>
 		</GroupBox>
-		<Button Grid.Row="1" Content="実行" Width="80" Height="24" Margin="5,5,5,5"
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="0" Content="DBから読み込み" Width="100" Height="24" Margin="5,5,5,5" HorizontalAlignment="Right"
+				Command="{Binding ReadDataCommand}"/>
+			<Button Grid.Column="1" Content="実行" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left"
 				Command="{Binding OptimizeCommand}"/>
+		</Grid>
 		<GroupBox Grid.Row="2" Header="実行ログ">
 			<TextBox Margin="5,5,5,5" IsReadOnly="True"/>
 		</GroupBox>

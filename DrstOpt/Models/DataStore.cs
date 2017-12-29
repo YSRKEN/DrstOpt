@@ -17,20 +17,18 @@ namespace DrstOpt.Models
 		public static Dictionary<string, int> IdolCardIndex { get; private set; }
 		// アイドルを所持しているかのフラグ
 		public static List<bool> HaveCardFlg { get; private set; }
-		// フォルダパス
-		private static string folderPath = @"F:\ソフトウェア\パズル・ゲーム\PC\デレステ計算機\Ver3系";
 
 		// 初期化
-		public static bool Initialize() {
+		public static bool Initialize(string folderPath) {
 			// ファイル読み込み
 			try {
 				// アイドル名の一覧を読み込む
 				Dictionary<string, int> idolCardIndex = null;
-				IdolCardList = ReadIdolCardList(out idolCardIndex);
+				IdolCardList = ReadIdolCardList(folderPath, out idolCardIndex);
 				IdolCardIndex = idolCardIndex;
 				// 所持しているアイドルの一覧を読み込む
 				List<IdolCard> extCardList = null;
-				HaveCardFlg = ReadHaveCardList(out extCardList);
+				HaveCardFlg = ReadHaveCardList(folderPath, out extCardList);
 				foreach(var idolCard in extCardList) {
 					IdolCardIndex[idolCard.CardName2] = IdolCardList.Count;
 					IdolCardList.Add(idolCard);
@@ -43,7 +41,7 @@ namespace DrstOpt.Models
 		}
 		// アイドル名の一覧を読み込む
 		// refには、アイドル名→インデックスへの変換操作を行わせる
-		private static List<IdolCard> ReadIdolCardList(out Dictionary<string, int> idolCardIndex) {
+		private static List<IdolCard> ReadIdolCardList(string folderPath, out Dictionary<string, int> idolCardIndex) {
 			// SQLを唱えて結果を取得する
 			string connectionString = $"Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={folderPath}\\IdolDB.accdb;Uid=admin;Pwd=;";
 			Console.WriteLine(connectionString);
@@ -110,7 +108,7 @@ namespace DrstOpt.Models
 			return idolCardList;
 		}
 		// 所持しているアイドルの一覧を読み込む
-		private static List<bool> ReadHaveCardList(out List<IdolCard> extCardList) {
+		private static List<bool> ReadHaveCardList(string folderPath, out List<IdolCard> extCardList) {
 			// メモリ割り当て
 			var haveCardFlg = new List<bool>();
 			extCardList = new List<IdolCard>();
