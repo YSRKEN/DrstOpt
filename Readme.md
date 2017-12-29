@@ -8,6 +8,10 @@
 
 ## 使い方
 
+- まず、[Microsoft Access データベース エンジン 2010 再頒布可能コンポーネント](https://www.microsoft.com/ja-jp/download/details.aspx?id=13255)をインストールします。この際、必ず **AccessDatabaseEngine.exe(x86版)をインストールしてください**
+- 次にzipファイルを展開します
+- DrstOpt.exeをクリックすれば起動するはずです
+
 ![image](https://user-images.githubusercontent.com/3734392/34440534-1cad3432-ecf9-11e7-843d-d94cada0e982.png)
 
 ## 使用上の注意
