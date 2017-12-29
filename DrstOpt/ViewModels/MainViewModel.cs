@@ -3,6 +3,7 @@ using Reactive.Bindings;
 using System.Windows;
 using System.Collections.Generic;
 using System;
+using DrstOpt.Properties;
 
 namespace DrstOpt.ViewModels
 {
@@ -11,9 +12,11 @@ namespace DrstOpt.ViewModels
 		private MainModel mainModel = new MainModel();
 
 		// 読み込み先フォルダのパス設定
-		public ReactiveProperty<string> SoftwareFolderPath { get; private set; } = new ReactiveProperty<string>("");
+		public ReactiveProperty<string> SoftwareFolderPath { get; private set; }
+			= new ReactiveProperty<string>(Settings.Default.SoftwareFolderPath);
 		// 最適化したい曲の属性
-		public ReactiveProperty<int> MusicAttributeIndex { get; private set; } = new ReactiveProperty<int>(0);
+		public ReactiveProperty<int> MusicAttributeIndex { get; private set; }
+			= new ReactiveProperty<int>(Settings.Default.MusicAttributeIndex);
 		// 属性一覧
 		public List<string> MusicAttributeList { get; } = new List<string> { "全体曲", "キュート", "クール", "パッション" };
 		// データを読み込めたか？
@@ -33,7 +36,15 @@ namespace DrstOpt.ViewModels
 
 		public MainViewModel() {
 			// コマンドを設定
-			MusicAttributeIndex.Subscribe(_ => AddLogText($"属性変更：{MusicAttributeList[MusicAttributeIndex.Value]}"));
+			MusicAttributeIndex.Subscribe(_ => {
+				AddLogText($"属性変更：{MusicAttributeList[MusicAttributeIndex.Value]}");
+				Settings.Default.MusicAttributeIndex = MusicAttributeIndex.Value;
+				Settings.Default.Save();
+			});
+			SoftwareFolderPath.Subscribe(_ => {
+				Settings.Default.SoftwareFolderPath = SoftwareFolderPath.Value;
+				Settings.Default.Save();
+			});
 			BrowseSoftwareFolderPathCommand.Subscribe(() => {
 				SoftwareFolderPath.Value = mainModel.BrowseSoftwareFolderPath(SoftwareFolderPath.Value);
 				if(SoftwareFolderPath.Value != "")

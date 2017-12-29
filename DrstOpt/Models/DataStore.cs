@@ -23,13 +23,11 @@ namespace DrstOpt.Models
 			// ファイル読み込み
 			try {
 				// アイドル名の一覧を読み込む
-				Dictionary<string, int> idolCardIndex = null;
-				IdolCardList = ReadIdolCardList(folderPath, out idolCardIndex);
+				IdolCardList = ReadIdolCardList(folderPath, out var idolCardIndex);
 				IdolCardIndex = idolCardIndex;
 				// 所持しているアイドルの一覧を読み込む
-				List<IdolCard> extCardList = null;
-				HaveCardFlg = ReadHaveCardList(folderPath, out extCardList);
-				foreach(var idolCard in extCardList) {
+				HaveCardFlg = ReadHaveCardList(folderPath, out var extCardList);
+				foreach (var idolCard in extCardList) {
 					IdolCardIndex[idolCard.CardName2] = IdolCardList.Count;
 					IdolCardList.Add(idolCard);
 				}
@@ -91,7 +89,7 @@ namespace DrstOpt.Models
 				decimal visual = r.Field<decimal>("Vi");
 				Attribute centerSkillAttribute = attributeTable[(r.Field<string>("SklType") ?? "")];
 				CSType centerSkillType = csTable[(r.Field<string>("SklTgt") ?? "")];
-				decimal centerSkillPower = (r.Field<decimal?>("SklEff").HasValue ? r.Field<decimal?>("SklEff").Value : 0);
+				decimal centerSkillPower = (r.Field<decimal?>("SklEff") ?? 0);
 				// 結果を構造体に包んで返す
 				return new IdolCard {
 					IdolName = idolName, Situation = situation, Reality = reality,
