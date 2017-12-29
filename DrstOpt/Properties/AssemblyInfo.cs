@@ -8,11 +8,11 @@ using System.Windows;
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
 [assembly: AssemblyTitle("DrstOpt")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Idol Unit Optimizer for \"THE iDOLM@STER Cinderella Girls: Starlight Stage\"")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("YSR")]
 [assembly: AssemblyProduct("DrstOpt")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright © YSR 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
