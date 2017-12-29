@@ -10,10 +10,10 @@ namespace DrstOpt.Models
 	class MainModel : BindableBase
 	{
 		// 最適化処理を行い、結果をダイアログで表示する
-		public Task<string> OptimizeIdolUnitAsync(Attribute attribute) {
-			return Task.Run(() => OptimizeIdolUnit(attribute));
+		public Task<string> OptimizeIdolUnitAsync(Config config) {
+			return Task.Run(() => OptimizeIdolUnit(config));
 		}
-		public string OptimizeIdolUnit(Attribute attribute) {
+		public string OptimizeIdolUnit(Config config) {
 			// 最適化処理を行い、結果をダイアログで表示する
 			// 解きたい数式の概要：
 			// 1. 各アイドルカードの種類数をNとする
@@ -39,7 +39,8 @@ namespace DrstOpt.Models
 			long allWallTime = 0;
 			double bestAppealValue = double.NegativeInfinity;
 			var bestSelectedIdolIndex = new List<int>();
-			OptimizeIdolUnitImpl(attribute, ref allWallTime, ref bestAppealValue, ref bestSelectedIdolIndex);
+			OptimizeIdolUnitImpl(config, ref allWallTime, ref bestAppealValue, ref bestSelectedIdolIndex);
+			Console.WriteLine($"{bestAppealValue}");
 			if (double.IsNegativeInfinity(bestAppealValue)) {
 				MessageBox.Show("エラー：問題に解が存在しませんでした", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				return "エラー：問題に解が存在しませんでした";
@@ -53,9 +54,7 @@ namespace DrstOpt.Models
 				long wallTime = 0;
 				double appealValue = double.NegativeInfinity;
 				var selectedIdolIndex = new List<int>();
-				OptimizeIdolUnitImpl(
-					attribute, i,
-					ref wallTime, ref appealValue, ref selectedIdolIndex);
+				OptimizeIdolUnitImpl(config, ref wallTime, ref appealValue, ref selectedIdolIndex, i);
 				allWallTime += wallTime;
 				// 最良解を更新
 				if (bestAppealValue < appealValue) {
@@ -74,104 +73,12 @@ namespace DrstOpt.Models
 			MessageBox.Show(message, "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Information);
 			return message;
 		}
-		void OptimizeIdolUnitImpl(Attribute attribute, ref long wallTime, ref double appealValue, ref List<int> selectedIdolIndex) {
+		void OptimizeIdolUnitImpl(Config config, ref long wallTime, ref double appealValue, ref List<int> selectedIdolIndex, int idolIndex = -1) {
 			using (var solver = Solver.CreateSolver("IntegerProgramming", "CBC_MIXED_INTEGER_PROGRAMMING")) {
 				// よく使う定数値
 				int N = DataStore.IdolCardList.Count;
 				int M = 5;
-
-				// 初期化できてない場合はnullが返る
-				if (solver == null) {
-					return;
-				}
-
-				// 最適化の方向
-				var objective = solver.Objective();
-				objective.SetMaximization();
-
-				// 変数の数・名前・範囲
-				//x_n_mが1なら、n番目のアイドルカードがm番目の配置で使用される
-				var x = new Variable[N, M];
-				for (int n = 0; n < N; ++n) {
-					for (int m = 0; m < M; ++m) {
-						x[n, m] = solver.MakeBoolVar($"x_{n + 1}_{m + 1}");
-					}
-				}
-
-				// 制約式の数・範囲
-				var e_useflg = new Constraint[N];
-				for (int n = 0; n < N; ++n) {
-					e_useflg[n] = solver.MakeConstraint(0.0, (DataStore.HaveCardFlg[n] ? 1.0 : 0.0), $"e_useflg_{n + 1}");
-				}
-				var e_posflg = new Constraint[M];
-				for (int m = 0; m < M; ++m) {
-					e_posflg[m] = solver.MakeConstraint(1.0, 1.0, $"e_posflg_{m + 1}");
-				}
-
-				// 目的関数の係数
-				for (int n = 0; n < N; ++n) {
-					// カードを選択
-					var idolCard = DataStore.IdolCardList[n];
-					// カードに掛かる効果を計算する
-					int vocalPump = 100, dancePump = 100, visualPump = 100;
-					//プレイする楽曲に掛かる効果
-					if (attribute == Attribute.All || attribute == idolCard.Attribute) {
-						vocalPump += 30;
-						dancePump += 30;
-						visualPump += 30;
-					}
-					// 最終的なカードのアピール値を計算する
-					double idolVocal = Math.Ceiling((double)idolCard.Vocal * vocalPump / 100);
-					double idolDance = Math.Ceiling((double)idolCard.Dance * dancePump / 100);
-					double idolVisual = Math.Ceiling((double)idolCard.Visual * visualPump / 100);
-					double idolPower = idolVocal + idolDance + idolVisual;
-					// 係数をセットする
-					for (int m = 0; m < M; ++m) {
-						objective.SetCoefficient(x[n, m], idolPower);
-					}
-				}
-
-				// 制約式の係数
-				for (int n = 0; n < N; ++n) {
-					for (int m = 0; m < M; ++m) {
-						e_useflg[n].SetCoefficient(x[n, m], 1);
-					}
-				}
-				for (int m = 0; m < M; ++m) {
-					for (int n = 0; n < N; ++n) {
-						e_posflg[m].SetCoefficient(x[n, m], 1);
-					}
-				}
-
-				// 最適化
-				int resultStatus = solver.Solve();
-
-				// 結果を取得
-				if (resultStatus != Solver.OPTIMAL) {
-					wallTime = solver.WallTime();
-					return;
-				}
-				selectedIdolIndex = new List<int>();
-				for (int m = 0; m < M; ++m) {
-					for (int n = 0; n < N; ++n) {
-						if (x[n, m].SolutionValue() > 0.5) {
-							selectedIdolIndex.Add(n);
-							break;
-						}
-					}
-				}
-				wallTime = solver.WallTime();
-				appealValue = solver.Objective().Value();
-				return;
-			}
-		}
-		void OptimizeIdolUnitImpl(Attribute attribute, int idolIndex,
-			ref long wallTime, ref double appealValue, ref List<int> selectedIdolIndex) {
-			using (var solver = Solver.CreateSolver("IntegerProgramming", "CBC_MIXED_INTEGER_PROGRAMMING")) {
-				// よく使う定数値
-				int N = DataStore.IdolCardList.Count;
-				int M = 5;
-				var centerCard = DataStore.IdolCardList[idolIndex];
+				var centerCard = (idolIndex >= 0 ? DataStore.IdolCardList[idolIndex] : new IdolCard());
 				var csAttribute = centerCard.CenterSkillAttribute;
 				var csType = centerCard.CenterSkillType;
 				decimal csPower = centerCard.CenterSkillPower;
@@ -209,7 +116,7 @@ namespace DrstOpt.Models
 					e_posflg[m] = solver.MakeConstraint(1.0, 1.0, $"e_posflg_{m + 1}");
 				}
 				// センターに指定したカードを指定するための制約
-				var e_center = solver.MakeConstraint(1.0, 1.0, "e_center");
+				var e_center = solver.MakeConstraint((idolIndex >= 0? 1.0 : 0.0), 1.0, "e_center");
 				// ○○プリンセス系スキルに関する制約
 				var e_princess = solver.MakeConstraint(0.0, 0.0, "e_princess");
 				// トリコロール系スキルに関する制約
@@ -224,22 +131,24 @@ namespace DrstOpt.Models
 					// カードに掛かる効果を計算する
 					int vocalPump = 100, dancePump = 100, visualPump = 100;
 					//プレイする楽曲に掛かる効果
-					if(attribute == Attribute.All || attribute == idolCard.Attribute) {
+					if(config.Attribute == Attribute.All || config.Attribute == idolCard.Attribute) {
 						vocalPump += 30;
 						dancePump += 30;
 						visualPump += 30;
 					}
 					//センター効果
-					if(csAttribute == Attribute.All || csAttribute == Attribute.Tricolore
-					|| ((csAttribute == Attribute.Cute || csAttribute == Attribute.CuteP) && idolCard.Attribute == Attribute.Cute)
-					|| ((csAttribute == Attribute.Cool || csAttribute == Attribute.CoolP) && idolCard.Attribute == Attribute.Cool)
-					|| ((csAttribute == Attribute.Passion || csAttribute == Attribute.PassionP) && idolCard.Attribute == Attribute.Passion)) {
-						if (csType == CSType.All || csType == CSType.Vocal)
-							vocalPump += (int)csPower;
-						if (csType == CSType.All || csType == CSType.Dance)
-							dancePump += (int)csPower;
-						if (csType == CSType.All || csType == CSType.Visual)
-							visualPump += (int)csPower;
+					if(idolIndex >= 0) {
+						if (csAttribute == Attribute.All || csAttribute == Attribute.Tricolore
+						|| ((csAttribute == Attribute.Cute || csAttribute == Attribute.CuteP) && idolCard.Attribute == Attribute.Cute)
+						|| ((csAttribute == Attribute.Cool || csAttribute == Attribute.CoolP) && idolCard.Attribute == Attribute.Cool)
+						|| ((csAttribute == Attribute.Passion || csAttribute == Attribute.PassionP) && idolCard.Attribute == Attribute.Passion)) {
+							if (csType == CSType.All || csType == CSType.Vocal)
+								vocalPump += (int)csPower;
+							if (csType == CSType.All || csType == CSType.Dance)
+								dancePump += (int)csPower;
+							if (csType == CSType.All || csType == CSType.Visual)
+								visualPump += (int)csPower;
+						}
 					}
 					// 最終的なカードのアピール値を計算する
 						double idolVocal = Math.Ceiling((double)idolCard.Vocal * vocalPump / 100);
@@ -263,28 +172,30 @@ namespace DrstOpt.Models
 						e_posflg[m].SetCoefficient(x[n, m], 1);
 					}
 				}
-				e_center.SetCoefficient(x[idolIndex, 0], 1.0);
-				for (int n = 0; n < N; ++n) {
-					if((csAttribute == Attribute.CuteP && DataStore.IdolCardList[n].Attribute != Attribute.Cute) 
-					|| (csAttribute == Attribute.CoolP && DataStore.IdolCardList[n].Attribute != Attribute.Cool)
-					|| (csAttribute == Attribute.PassionP && DataStore.IdolCardList[n].Attribute != Attribute.Passion)) {
-						for (int m = 0; m < M; ++m) {
-							e_princess.SetCoefficient(x[n, m], 1);
+				if(idolIndex >= 0.0) {
+					e_center.SetCoefficient(x[idolIndex, 0], 1.0);
+					for (int n = 0; n < N; ++n) {
+						if ((csAttribute == Attribute.CuteP && DataStore.IdolCardList[n].Attribute != Attribute.Cute)
+						|| (csAttribute == Attribute.CoolP && DataStore.IdolCardList[n].Attribute != Attribute.Cool)
+						|| (csAttribute == Attribute.PassionP && DataStore.IdolCardList[n].Attribute != Attribute.Passion)) {
+							for (int m = 0; m < M; ++m) {
+								e_princess.SetCoefficient(x[n, m], 1);
+							}
 						}
 					}
-				}
-				for (int m = 0; m < M; ++m) {
-					for (int n = 0; n < N; ++n) {
-						switch (DataStore.IdolCardList[n].Attribute) {
-						case Attribute.Cute:
-							e_cu.SetCoefficient(x[n, m], 1.0);
-							break;
-						case Attribute.Cool:
-							e_co.SetCoefficient(x[n, m], 1.0);
-							break;
-						case Attribute.Passion:
-							e_pa.SetCoefficient(x[n, m], 1.0);
-							break;
+					for (int m = 0; m < M; ++m) {
+						for (int n = 0; n < N; ++n) {
+							switch (DataStore.IdolCardList[n].Attribute) {
+							case Attribute.Cute:
+								e_cu.SetCoefficient(x[n, m], 1.0);
+								break;
+							case Attribute.Cool:
+								e_co.SetCoefficient(x[n, m], 1.0);
+								break;
+							case Attribute.Passion:
+								e_pa.SetCoefficient(x[n, m], 1.0);
+								break;
+							}
 						}
 					}
 				}

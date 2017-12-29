@@ -13,6 +13,16 @@ namespace DrstOpt.ViewModels
 
 		// 属性一覧
 		public List<string> MusicAttributeList { get; } = new List<string> { "全体曲", "キュート", "クール", "パッション" };
+		// 設定一覧
+		private Config config { get {
+			return new Config {
+				Attribute = (Models.Attribute)MusicAttributeIndex.Value,
+				IncludeLifeRecoveryFlg = IncludeLifeRecoveryFlg.Value,
+				IncludeDamageGuardFlg = IncludeDamageGuardFlg.Value,
+				ExcludeConcentrationFlg = ExcludeConcentrationFlg.Value,
+				ExcludeOverloadFlg = ExcludeOverloadFlg.Value
+			};
+		}}
 
 		// 読み込み先フォルダのパス設定
 		public ReactiveProperty<string> SoftwareFolderPath { get; private set; }
@@ -95,7 +105,7 @@ namespace DrstOpt.ViewModels
 			OptimizeCommand = ReadDataFlg.ToReactiveCommand();
 			OptimizeCommand.Subscribe(async () => {
 				AddLogText("最適化開始...");
-				string optimizedLog = await mainModel.OptimizeIdolUnitAsync((Models.Attribute)MusicAttributeIndex.Value);
+				string optimizedLog = await mainModel.OptimizeIdolUnitAsync(config);
 				AddLogText("最適化完了");
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				AddLogText(optimizedLog);
