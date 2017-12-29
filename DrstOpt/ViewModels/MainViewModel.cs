@@ -1,10 +1,8 @@
 ﻿using DrstOpt.Models;
 using Reactive.Bindings;
-using System.ComponentModel.DataAnnotations;
 using System.Windows;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace DrstOpt.ViewModels
 {
@@ -35,10 +33,11 @@ namespace DrstOpt.ViewModels
 
 		public MainViewModel() {
 			// コマンドを設定
-			//MusicAttributeIndex.Subscribe(() => { AddLogText($"属性変更：{MusicAttributeList[MusicAttributeIndex.Value]}"); });
+			MusicAttributeIndex.Subscribe(_ => AddLogText($"属性変更：{MusicAttributeList[MusicAttributeIndex.Value]}"));
 			BrowseSoftwareFolderPathCommand.Subscribe(() => {
 				SoftwareFolderPath.Value = mainModel.BrowseSoftwareFolderPath(SoftwareFolderPath.Value);
-				AddLogText($"フォルダパス：{SoftwareFolderPath.Value}");
+				if(SoftwareFolderPath.Value != "")
+					AddLogText($"フォルダパス：{SoftwareFolderPath.Value}");
 			});
 			ReadDataCommand.Subscribe(() => {
 				ReadDataFlg.Value = DataStore.Initialize(SoftwareFolderPath.Value);
@@ -52,7 +51,7 @@ namespace DrstOpt.ViewModels
 			OptimizeCommand = ReadDataFlg.ToReactiveCommand();
 			OptimizeCommand.Subscribe(async () => {
 				AddLogText("最適化開始...");
-				string optimizedLog = await mainModel.OptimizeIdolUnitAsync((Attribute)MusicAttributeIndex.Value);
+				string optimizedLog = await mainModel.OptimizeIdolUnitAsync((Models.Attribute)MusicAttributeIndex.Value);
 				AddLogText("最適化完了");
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				AddLogText(optimizedLog);
