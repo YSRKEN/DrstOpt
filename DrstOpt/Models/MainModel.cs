@@ -9,7 +9,7 @@ namespace DrstOpt.Models
 	class MainModel : BindableBase
 	{
 		// 最適化処理を行い、結果をダイアログで表示する
-		public void OptimizeIdolUnit(Attribute attribute) {
+		public string OptimizeIdolUnit(Attribute attribute) {
 			// 最適化処理を行い、結果をダイアログで表示する
 			// 解きたい数式の概要：
 			// 1. 各アイドルカードの種類数をNとする
@@ -38,7 +38,7 @@ namespace DrstOpt.Models
 			OptimizeIdolUnitImpl(attribute, ref allWallTime, ref bestAppealValue, ref bestSelectedIdolIndex);
 			if (double.IsNegativeInfinity(bestAppealValue)) {
 				MessageBox.Show("エラー：問題に解が存在しませんでした", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-				return;
+				return "エラー：問題に解が存在しませんでした";
 			}
 			// 次に、センターを指定して解く(この際能力は必ず有効になる配置だとする)
 			for(int i = 0; i < DataStore.IdolCardList.Count; ++i) {
@@ -68,6 +68,7 @@ namespace DrstOpt.Models
 			message += $"\n四番手：{DataStore.IdolCardList[bestSelectedIdolIndex[3]].CardInfo}";
 			message += $"\n五番手：{DataStore.IdolCardList[bestSelectedIdolIndex[4]].CardInfo}";
 			MessageBox.Show(message, "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Information);
+			return message;
 		}
 		void OptimizeIdolUnitImpl(Attribute attribute, ref long wallTime, ref double appealValue, ref List<int> selectedIdolIndex) {
 			using (var solver = Solver.CreateSolver("IntegerProgramming", "CBC_MIXED_INTEGER_PROGRAMMING")) {

@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:DrstOpt.ViewModels"
 	mc:Ignorable="d"
-	Title="デレステ編成最適化" Height="300" Width="400">
+	Title="デレステ編成最適化" Height="400" Width="400">
 	<Window.DataContext>
 		<local:MainViewModel/>
 	</Window.DataContext>
@@ -40,12 +40,8 @@
 					</Grid.ColumnDefinitions>
 					<TextBlock Grid.Column="0" Text="曲の属性" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" />
 					<ComboBox Grid.Column="1" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-						SelectedIndex="{Binding MusicAttributeIndex.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-						<ComboBoxItem Content="全体曲"/>
-						<ComboBoxItem Content="キュート"/>
-						<ComboBoxItem Content="クール"/>
-						<ComboBoxItem Content="パッション"/>
-					</ComboBox>
+						ItemsSource="{Binding MusicAttributeList}"
+						SelectedIndex="{Binding MusicAttributeIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				</Grid>
 			</Grid>
 		</GroupBox>
@@ -60,7 +56,8 @@
 				Command="{Binding OptimizeCommand}"/>
 		</Grid>
 		<GroupBox Grid.Row="2" Header="実行ログ">
-			<TextBox Margin="5,5,5,5" IsReadOnly="True"/>
+			<TextBox Margin="5,5,5,5" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+				Text="{Binding LoggingText.Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
 		</GroupBox>
 	</Grid>
 </Window>
