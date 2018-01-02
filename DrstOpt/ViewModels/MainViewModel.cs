@@ -77,6 +77,31 @@ namespace DrstOpt.ViewModels
 
 		public MainViewModel() {
 			// コマンドを設定
+			//DBの読み込みについて
+			SoftwareFolderPath.Subscribe(_ => {
+				Settings.Default.SoftwareFolderPath = SoftwareFolderPath.Value;
+				Settings.Default.Save();
+			});
+			BrowseSoftwareFolderPathCommand.Subscribe(() => {
+				SoftwareFolderPath.Value = mainModel.BrowseSoftwareFolderPath(SoftwareFolderPath.Value);
+				if (SoftwareFolderPath.Value != "")
+					AddLogText($"フォルダパス：{SoftwareFolderPath.Value}");
+			});
+			ReadDataOnLoadFlg.Subscribe(_ => {
+				AddLogText($"ソフト起動時にDBを読み込むか？：{ReadDataOnLoadFlg.Value}");
+				Settings.Default.ReadDataOnLoadFlg = ReadDataOnLoadFlg.Value;
+				Settings.Default.Save();
+			});
+			ReadDataCommand.Subscribe(() => {
+				ReadDataFlg.Value = DataStore.Initialize(SoftwareFolderPath.Value);
+				if (!ReadDataFlg.Value) {
+					MessageBox.Show("エラー：データベースの初期化に失敗しました", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Error);
+					AddLogText("エラー：データベースの初期化に失敗しました");
+				} else {
+					AddLogText("データベースを初期化できました");
+				}
+			});
+			//選択メンバーについて
 			IncludeLifeRecoveryFlg.Subscribe(_ => {
 				AddLogText($"回復を積むか？：{IncludeLifeRecoveryFlg.Value}");
 				Settings.Default.IncludeLifeRecoveryFlg = IncludeLifeRecoveryFlg.Value;
@@ -97,21 +122,13 @@ namespace DrstOpt.ViewModels
 				Settings.Default.ExcludeOverloadFlg = ExcludeOverloadFlg.Value;
 				Settings.Default.Save();
 			});
-			ReadDataOnLoadFlg.Subscribe(_ => {
-				AddLogText($"ソフト起動時にDBを読み込むか？：{ReadDataOnLoadFlg.Value}");
-				Settings.Default.ReadDataOnLoadFlg = ReadDataOnLoadFlg.Value;
-				Settings.Default.Save();
-			});
+			// 最適化設定について
 			MusicAttributeIndex.Subscribe(_ => {
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				Settings.Default.MusicAttributeIndex = MusicAttributeIndex.Value;
 				Settings.Default.Save();
 			});
-			SoftwareFolderPath.Subscribe(_ => {
-				Settings.Default.SoftwareFolderPath = SoftwareFolderPath.Value;
-				Settings.Default.Save();
-			});
-
+			// Grooveイベントについて
 			GrooveFlg.Subscribe(_ => {
 				AddLogText($"Grooveイベントにおける最適化か？：{GrooveFlg.Value}");
 				Settings.Default.GrooveFlg = GrooveFlg.Value;
@@ -127,21 +144,7 @@ namespace DrstOpt.ViewModels
 				Settings.Default.GrooveAppealIndex = GrooveAppealIndex.Value;
 				Settings.Default.Save();
 			});
-
-			BrowseSoftwareFolderPathCommand.Subscribe(() => {
-				SoftwareFolderPath.Value = mainModel.BrowseSoftwareFolderPath(SoftwareFolderPath.Value);
-				if(SoftwareFolderPath.Value != "")
-					AddLogText($"フォルダパス：{SoftwareFolderPath.Value}");
-			});
-			ReadDataCommand.Subscribe(() => {
-				ReadDataFlg.Value = DataStore.Initialize(SoftwareFolderPath.Value);
-				if (!ReadDataFlg.Value) {
-					MessageBox.Show("エラー：データベースの初期化に失敗しました", "デレステ編成最適化", MessageBoxButton.OK, MessageBoxImage.Error);
-					AddLogText("エラー：データベースの初期化に失敗しました");
-				} else {
-					AddLogText("データベースを初期化できました");
-				}
-			});
+			// 最適化コマンドについて
 			OptimizeCommand = ReadDataFlg.ToReactiveCommand();
 			OptimizeCommand.Subscribe(async () => {
 				AddLogText("最適化開始...");
