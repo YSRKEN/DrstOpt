@@ -140,6 +140,7 @@ namespace DrstOpt.ViewModels
 				AddLogText($"Groove属性：{GrooveAttributeList[x]}");
 				Settings.Default.GrooveAttributeIndex = x;
 				Settings.Default.Save();
+				MusicAttributeIndex.Value = (x + 1);
 			});
 			GrooveAppealIndex.Subscribe(x => {
 				AddLogText($"Grooveアピールタイプ：{GrooveAppealList[x]}");
