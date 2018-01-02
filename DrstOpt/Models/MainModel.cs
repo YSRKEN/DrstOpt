@@ -155,8 +155,27 @@ namespace DrstOpt.Models
 								visualPump += (int)csPower;
 						}
 					}
+					//Groove効果
+					if (config.GrooveFlg && config.GrooveAttribute == idolCard.Attribute) {
+						switch (config.GrooveAppeal) {
+						case Appeal.All:
+							vocalPump += 50;
+							dancePump += 50;
+							visualPump += 50;
+							break;
+						case Appeal.Vocal:
+							vocalPump += 50;
+							break;
+						case Appeal.Dance:
+							dancePump += 50;
+							break;
+						case Appeal.Visual:
+							visualPump += 50;
+							break;
+						}
+					}
 					// 最終的なカードのアピール値を計算する
-						double idolVocal = Math.Ceiling((double)idolCard.Vocal * vocalPump / 100);
+					double idolVocal = Math.Ceiling((double)idolCard.Vocal * vocalPump / 100);
 					double idolDance = Math.Ceiling((double)idolCard.Dance * dancePump / 100);
 					double idolVisual = Math.Ceiling((double)idolCard.Visual * visualPump / 100);
 					double idolPower = idolVocal + idolDance + idolVisual;
@@ -258,10 +277,6 @@ namespace DrstOpt.Models
 			} else {
 				return startPath;
 			}
-		}
-		// 変更したフォルダパスをDataStore側に反映する
-		public void SetFolderPath(string folderPath) {
-
 		}
 	}
 }

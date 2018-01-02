@@ -70,7 +70,7 @@
 						IsEnabled="{Binding GrooveFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						ItemsSource="{Binding GrooveAttributeList}"
 						SelectedIndex="{Binding GrooveAttributeIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-					<ComboBox Grid.Column="2" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+					<ComboBox Grid.Column="2" Width="100" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 						IsEnabled="{Binding GrooveFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						ItemsSource="{Binding GrooveAppealList}"
 						SelectedIndex="{Binding GrooveAppealIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
