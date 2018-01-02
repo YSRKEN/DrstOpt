@@ -22,6 +22,7 @@
 					<RowDefinition/>
 					<RowDefinition/>
 					<RowDefinition/>
+					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<Grid Grid.Row="0">
 					<Grid.ColumnDefinitions>
@@ -57,7 +58,24 @@
 					<CheckBox Grid.Column="5" Content="オバロ禁止" Margin="5,5,5,5" VerticalAlignment="Center"
 							IsChecked="{Binding ExcludeOverloadFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				</Grid>
-				<CheckBox Grid.Row="2" Content="ソフト起動時にDBを読み込み" Margin="5,5,5,5" VerticalAlignment="Center"
+				<Grid Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="auto"/>
+					</Grid.ColumnDefinitions>
+					<CheckBox Grid.Column="0" Content="Grooveイベント" Margin="5,5,5,5" VerticalAlignment="Center"
+							IsChecked="{Binding GrooveFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<ComboBox Grid.Column="1" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+						IsEnabled="{Binding GrooveFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						ItemsSource="{Binding GrooveAttributeList}"
+						SelectedIndex="{Binding GrooveAttributeIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<ComboBox Grid.Column="2" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+						IsEnabled="{Binding GrooveFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						ItemsSource="{Binding GrooveAppealList}"
+						SelectedIndex="{Binding GrooveAppealIndex.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				</Grid>
+				<CheckBox Grid.Row="3" Content="ソフト起動時にDBを読み込み" Margin="5,5,5,5" VerticalAlignment="Center"
 						IsChecked="{Binding ReadDataOnLoadFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</GroupBox>

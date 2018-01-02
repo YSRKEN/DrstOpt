@@ -106,5 +106,41 @@ namespace DrstOpt.Properties {
                 this["ReadDataOnLoadFlg"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int GrooveAttributeIndex {
+            get {
+                return ((int)(this["GrooveAttributeIndex"]));
+            }
+            set {
+                this["GrooveAttributeIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int GrooveAppealIndex {
+            get {
+                return ((int)(this["GrooveAppealIndex"]));
+            }
+            set {
+                this["GrooveAppealIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GrooveFlg {
+            get {
+                return ((bool)(this["GrooveFlg"]));
+            }
+            set {
+                this["GrooveFlg"] = value;
+            }
+        }
     }
 }

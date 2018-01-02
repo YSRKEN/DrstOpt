@@ -23,6 +23,12 @@ namespace DrstOpt.ViewModels
 				ExcludeOverloadFlg = ExcludeOverloadFlg.Value
 			};
 		}}
+		// Grooveイベントにおける属性・タイプ一覧
+		// 属性一覧
+		public List<string> GrooveAttributeList { get; } = new List<string> { "キュート", "クール", "パッション" };
+		// 属性一覧
+		public List<string> GrooveAppealList { get; } = new List<string> { "全体アピール", "ボーカル", "ダンス", "ビジュアル" };
+
 
 		// 読み込み先フォルダのパス設定
 		public ReactiveProperty<string> SoftwareFolderPath { get; }
@@ -45,6 +51,15 @@ namespace DrstOpt.ViewModels
 		// ソフト起動時に自動でDBを読み込むか？
 		public ReactiveProperty<bool> ReadDataOnLoadFlg { get; }
 			= new ReactiveProperty<bool>(Settings.Default.ReadDataOnLoadFlg);
+		// Grooveイベントにおける最適化か？
+		public ReactiveProperty<bool> GrooveFlg { get; }
+			= new ReactiveProperty<bool>(Settings.Default.GrooveFlg);
+		// Grooveイベントにおける属性
+		public ReactiveProperty<int> GrooveAttributeIndex { get; }
+			= new ReactiveProperty<int>(Settings.Default.GrooveAttributeIndex);
+		// Grooveイベントにおけるアピール
+		public ReactiveProperty<int> GrooveAppealIndex { get; }
+			= new ReactiveProperty<int>(Settings.Default.GrooveAppealIndex);
 		// データを読み込めたか？
 		public ReactiveProperty<bool> ReadDataFlg { get; } = new ReactiveProperty<bool>(false);
 		// 実行ログ
@@ -96,6 +111,23 @@ namespace DrstOpt.ViewModels
 				Settings.Default.SoftwareFolderPath = SoftwareFolderPath.Value;
 				Settings.Default.Save();
 			});
+
+			GrooveFlg.Subscribe(_ => {
+				AddLogText($"Grooveイベントにおける最適化か？：{GrooveFlg.Value}");
+				Settings.Default.GrooveFlg = GrooveFlg.Value;
+				Settings.Default.Save();
+			});
+			GrooveAttributeIndex.Subscribe(_ => {
+				AddLogText($"Groove属性：{GrooveAttributeList[GrooveAttributeIndex.Value]}");
+				Settings.Default.GrooveAttributeIndex = GrooveAttributeIndex.Value;
+				Settings.Default.Save();
+			});
+			GrooveAppealIndex.Subscribe(_ => {
+				AddLogText($"Grooveアピールタイプ：{GrooveAppealList[GrooveAppealIndex.Value]}");
+				Settings.Default.GrooveAppealIndex = GrooveAppealIndex.Value;
+				Settings.Default.Save();
+			});
+
 			BrowseSoftwareFolderPathCommand.Subscribe(() => {
 				SoftwareFolderPath.Value = mainModel.BrowseSoftwareFolderPath(SoftwareFolderPath.Value);
 				if(SoftwareFolderPath.Value != "")
