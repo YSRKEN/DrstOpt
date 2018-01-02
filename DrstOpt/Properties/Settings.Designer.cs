@@ -94,5 +94,17 @@ namespace DrstOpt.Properties {
                 this["ExcludeOverloadFlg"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ReadDataOnLoadFlg {
+            get {
+                return ((bool)(this["ReadDataOnLoadFlg"]));
+            }
+            set {
+                this["ReadDataOnLoadFlg"] = value;
+            }
+        }
     }
 }

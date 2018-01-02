@@ -25,33 +25,36 @@ namespace DrstOpt.ViewModels
 		}}
 
 		// 読み込み先フォルダのパス設定
-		public ReactiveProperty<string> SoftwareFolderPath { get; private set; }
+		public ReactiveProperty<string> SoftwareFolderPath { get; }
 			= new ReactiveProperty<string>(Settings.Default.SoftwareFolderPath);
 		// 最適化したい曲の属性
-		public ReactiveProperty<int> MusicAttributeIndex { get; private set; }
+		public ReactiveProperty<int> MusicAttributeIndex { get; }
 			= new ReactiveProperty<int>(Settings.Default.MusicAttributeIndex);
 		// 回復を積むか？
-		public ReactiveProperty<bool> IncludeLifeRecoveryFlg { get; private set; }
+		public ReactiveProperty<bool> IncludeLifeRecoveryFlg { get; }
 			= new ReactiveProperty<bool>(Settings.Default.IncludeLifeRecoveryFlg);
 		// ダメガを積むか？
-		public ReactiveProperty<bool> IncludeDamageGuardFlg { get; private set; }
+		public ReactiveProperty<bool> IncludeDamageGuardFlg { get; }
 			= new ReactiveProperty<bool>(Settings.Default.IncludeDamageGuardFlg);
 		// コンセを禁止するか？
-		public ReactiveProperty<bool> ExcludeConcentrationFlg { get; private set; }
+		public ReactiveProperty<bool> ExcludeConcentrationFlg { get; }
 			= new ReactiveProperty<bool>(Settings.Default.ExcludeConcentrationFlg);
 		// オバロを禁止するか？
-		public ReactiveProperty<bool> ExcludeOverloadFlg { get; private set; }
+		public ReactiveProperty<bool> ExcludeOverloadFlg { get; }
 			= new ReactiveProperty<bool>(Settings.Default.ExcludeOverloadFlg);
+		// ソフト起動時に自動でDBを読み込むか？
+		public ReactiveProperty<bool> ReadDataOnLoadFlg { get; }
+			= new ReactiveProperty<bool>(Settings.Default.ReadDataOnLoadFlg);
 		// データを読み込めたか？
-		public ReactiveProperty<bool> ReadDataFlg { get; private set; } = new ReactiveProperty<bool>(false);
+		public ReactiveProperty<bool> ReadDataFlg { get; } = new ReactiveProperty<bool>(false);
 		// 実行ログ
-		public ReactiveProperty<string> LoggingText { get; private set; } = new ReactiveProperty<string>("");
+		public ReactiveProperty<string> LoggingText { get; } = new ReactiveProperty<string>("");
 		// 参照ボタン
-		public ReactiveCommand BrowseSoftwareFolderPathCommand { get; private set; } = new ReactiveCommand();
+		public ReactiveCommand BrowseSoftwareFolderPathCommand { get; } = new ReactiveCommand();
 		// データ読み込みボタン
-		public ReactiveCommand ReadDataCommand { get; private set; } = new ReactiveCommand();
+		public ReactiveCommand ReadDataCommand { get; } = new ReactiveCommand();
 		// 最適化ボタン
-		public ReactiveCommand OptimizeCommand { get; private set; }
+		public ReactiveCommand OptimizeCommand { get; }
 
 		private void AddLogText(string text) {
 			LoggingText.Value += text + "\n";
@@ -77,6 +80,11 @@ namespace DrstOpt.ViewModels
 			ExcludeOverloadFlg.Subscribe(_ => {
 				AddLogText($"オバロを禁止するか？：{ExcludeOverloadFlg.Value}");
 				Settings.Default.ExcludeOverloadFlg = ExcludeOverloadFlg.Value;
+				Settings.Default.Save();
+			});
+			ReadDataOnLoadFlg.Subscribe(_ => {
+				AddLogText($"ソフト起動時にDBを読み込むか？：{ReadDataOnLoadFlg.Value}");
+				Settings.Default.ReadDataOnLoadFlg = ReadDataOnLoadFlg.Value;
 				Settings.Default.Save();
 			});
 			MusicAttributeIndex.Subscribe(_ => {
@@ -110,6 +118,10 @@ namespace DrstOpt.ViewModels
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				AddLogText(optimizedLog);
 			});
+			// ソフト起動時にDBを読み込む
+			if (ReadDataOnLoadFlg.Value) {
+				ReadDataCommand.Execute();
+			}
 		}
 	}
 }
