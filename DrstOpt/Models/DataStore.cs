@@ -275,6 +275,8 @@ namespace DrstOpt.Models
 	enum Reality { N, R, SR, SSR }
 	// アイドル/楽曲/センター効果の属性
 	enum Attribute { All, Cute, Cool, Passion, CuteP, CoolP, PassionP, Tricolore, None }
+	// アピールタイプ
+	enum Appeal { All, Vocal, Dance, Visual }
 	// センター効果の種類
 	enum CSType { All, Vocal, Dance, Visual, Skill, Life, None }
 	// 特技の種類

@@ -20,13 +20,15 @@ namespace DrstOpt.ViewModels
 				IncludeLifeRecoveryFlg = IncludeLifeRecoveryFlg.Value,
 				IncludeDamageGuardFlg = IncludeDamageGuardFlg.Value,
 				ExcludeConcentrationFlg = ExcludeConcentrationFlg.Value,
-				ExcludeOverloadFlg = ExcludeOverloadFlg.Value
+				ExcludeOverloadFlg = ExcludeOverloadFlg.Value,
+				GrooveFlg = GrooveFlg.Value,
+				GrooveAttribute = (Models.Attribute)(GrooveAttributeIndex.Value + 1),
+				GrooveAppeal = (Models.Appeal)GrooveAppealIndex.Value
 			};
 		}}
-		// Grooveイベントにおける属性・タイプ一覧
-		// 属性一覧
+		// Grooveイベントにおける属性一覧
 		public List<string> GrooveAttributeList { get; } = new List<string> { "キュート", "クール", "パッション" };
-		// 属性一覧
+		// Grooveイベントにおけるアピールタイプ一覧
 		public List<string> GrooveAppealList { get; } = new List<string> { "全体アピール", "ボーカル", "ダンス", "ビジュアル" };
 
 

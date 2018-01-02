@@ -18,5 +18,11 @@ namespace DrstOpt.Models
 		public bool ExcludeConcentrationFlg;
 		// オバロを禁止するか？
 		public bool ExcludeOverloadFlg;
+		// Grooveイベントにおける最適化か？
+		public bool GrooveFlg;
+		// Grooveイベントにおける属性
+		public Attribute GrooveAttribute;
+		// Grooveイベントにおけるアピール
+		public Appeal GrooveAppeal;
 	}
 }
