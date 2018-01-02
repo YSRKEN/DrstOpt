@@ -78,8 +78,8 @@ namespace DrstOpt.ViewModels
 		public MainViewModel() {
 			// コマンドを設定
 			//DBの読み込みについて
-			SoftwareFolderPath.Subscribe(_ => {
-				Settings.Default.SoftwareFolderPath = SoftwareFolderPath.Value;
+			SoftwareFolderPath.Subscribe(x => {
+				Settings.Default.SoftwareFolderPath = x;
 				Settings.Default.Save();
 			});
 			BrowseSoftwareFolderPathCommand.Subscribe(() => {
@@ -87,9 +87,9 @@ namespace DrstOpt.ViewModels
 				if (SoftwareFolderPath.Value != "")
 					AddLogText($"フォルダパス：{SoftwareFolderPath.Value}");
 			});
-			ReadDataOnLoadFlg.Subscribe(_ => {
-				AddLogText($"ソフト起動時にDBを読み込むか？：{ReadDataOnLoadFlg.Value}");
-				Settings.Default.ReadDataOnLoadFlg = ReadDataOnLoadFlg.Value;
+			ReadDataOnLoadFlg.Subscribe(x => {
+				AddLogText($"ソフト起動時にDBを読み込むか？：{x}");
+				Settings.Default.ReadDataOnLoadFlg = x;
 				Settings.Default.Save();
 			});
 			ReadDataCommand.Subscribe(() => {
@@ -102,46 +102,46 @@ namespace DrstOpt.ViewModels
 				}
 			});
 			//選択メンバーについて
-			IncludeLifeRecoveryFlg.Subscribe(_ => {
-				AddLogText($"回復を積むか？：{IncludeLifeRecoveryFlg.Value}");
-				Settings.Default.IncludeLifeRecoveryFlg = IncludeLifeRecoveryFlg.Value;
+			IncludeLifeRecoveryFlg.Subscribe(x => {
+				AddLogText($"回復を積むか？：{x}");
+				Settings.Default.IncludeLifeRecoveryFlg = x;
 				Settings.Default.Save();
 			});
-			IncludeDamageGuardFlg.Subscribe(_ => {
-				AddLogText($"ダメガを積むか？：{IncludeDamageGuardFlg.Value}");
-				Settings.Default.IncludeDamageGuardFlg = IncludeDamageGuardFlg.Value;
+			IncludeDamageGuardFlg.Subscribe(x => {
+				AddLogText($"ダメガを積むか？：{x}");
+				Settings.Default.IncludeDamageGuardFlg = x;
 				Settings.Default.Save();
 			});
-			ExcludeConcentrationFlg.Subscribe(_ => {
-				AddLogText($"コンセを禁止するか？：{ExcludeConcentrationFlg.Value}");
-				Settings.Default.ExcludeConcentrationFlg = ExcludeConcentrationFlg.Value;
+			ExcludeConcentrationFlg.Subscribe(x => {
+				AddLogText($"コンセを禁止するか？：{x}");
+				Settings.Default.ExcludeConcentrationFlg = x;
 				Settings.Default.Save();
 			});
-			ExcludeOverloadFlg.Subscribe(_ => {
-				AddLogText($"オバロを禁止するか？：{ExcludeOverloadFlg.Value}");
-				Settings.Default.ExcludeOverloadFlg = ExcludeOverloadFlg.Value;
+			ExcludeOverloadFlg.Subscribe(x => {
+				AddLogText($"オバロを禁止するか？：{x}");
+				Settings.Default.ExcludeOverloadFlg = x;
 				Settings.Default.Save();
 			});
 			// 最適化設定について
-			MusicAttributeIndex.Subscribe(_ => {
-				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
-				Settings.Default.MusicAttributeIndex = MusicAttributeIndex.Value;
+			MusicAttributeIndex.Subscribe(x => {
+				AddLogText($"属性：{MusicAttributeList[x]}");
+				Settings.Default.MusicAttributeIndex = x;
 				Settings.Default.Save();
 			});
 			// Grooveイベントについて
-			GrooveFlg.Subscribe(_ => {
-				AddLogText($"Grooveイベントにおける最適化か？：{GrooveFlg.Value}");
-				Settings.Default.GrooveFlg = GrooveFlg.Value;
+			GrooveFlg.Subscribe(x => {
+				AddLogText($"Grooveイベントにおける最適化か？：{x}");
+				Settings.Default.GrooveFlg = x;
 				Settings.Default.Save();
 			});
-			GrooveAttributeIndex.Subscribe(_ => {
-				AddLogText($"Groove属性：{GrooveAttributeList[GrooveAttributeIndex.Value]}");
-				Settings.Default.GrooveAttributeIndex = GrooveAttributeIndex.Value;
+			GrooveAttributeIndex.Subscribe(x => {
+				AddLogText($"Groove属性：{GrooveAttributeList[x]}");
+				Settings.Default.GrooveAttributeIndex = x;
 				Settings.Default.Save();
 			});
-			GrooveAppealIndex.Subscribe(_ => {
-				AddLogText($"Grooveアピールタイプ：{GrooveAppealList[GrooveAppealIndex.Value]}");
-				Settings.Default.GrooveAppealIndex = GrooveAppealIndex.Value;
+			GrooveAppealIndex.Subscribe(x => {
+				AddLogText($"Grooveアピールタイプ：{GrooveAppealList[x]}");
+				Settings.Default.GrooveAppealIndex = x;
 				Settings.Default.Save();
 			});
 			// 最適化コマンドについて
