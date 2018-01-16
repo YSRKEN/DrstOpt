@@ -66,6 +66,10 @@ namespace DrstOpt.Models
 					{ "Coプリンセス", Attribute.CoolP },
 					{ "Paプリンセス", Attribute.PassionP },
 					{ "トリコロール", Attribute.Tricolore },
+					{ "フォーチュンプレゼント", Attribute.Fortune },
+					{ "Cuチアー", Attribute.CuteC },
+					{ "Coチアー", Attribute.CoolC },
+					{ "Paチアー", Attribute.PassionC },
 					{ "", Attribute.None },
 				};
 			var csTable = new Dictionary<string, CSType> {
@@ -75,6 +79,7 @@ namespace DrstOpt.Models
 					{ "ビジュアル", CSType.Visual },
 					{ "特技発動率", CSType.Skill },
 					{ "ライフ", CSType.Life },
+					{ "ライブ報酬", CSType.Live },
 					{ "", CSType.None },
 				};
 			var abilityTable = new Dictionary<string, Ability> {
@@ -91,6 +96,8 @@ namespace DrstOpt.Models
 				{ "キュートフォーカス", Ability.CuteF},
 				{ "クールフォーカス", Ability.CoolF},
 				{ "パッションフォーカス", Ability.PassionF},
+				{ "アンコール", Ability.Encore},
+				{ "ライフスパークル", Ability.LSparkle},
 				{ "", Ability.None }
 			};
 			idolCardIndex = new Dictionary<string, int>();
@@ -274,16 +281,17 @@ namespace DrstOpt.Models
 	// 暗黙の仮定として、全て特訓済みのカード(N+、SSR+など)だとする
 	enum Reality { N, R, SR, SSR }
 	// アイドル/楽曲/センター効果の属性
-	enum Attribute { All, Cute, Cool, Passion, CuteP, CoolP, PassionP, Tricolore, None }
+	enum Attribute { All, Cute, Cool, Passion, CuteP, CoolP, PassionP, Tricolore, Fortune, CuteC, CoolC, PassionC, None }
 	// アピールタイプ
 	enum Appeal { All, Vocal, Dance, Visual }
 	// センター効果の種類
-	enum CSType { All, Vocal, Dance, Visual, Skill, Life, None }
+	enum CSType { All, Vocal, Dance, Visual, Skill, Life, Live, None }
 	// 特技の種類
 	// スコアアップ・コンボボーナス・オーバーロード・判定強化・コンボ継続・
 	// ライフ回復・ダメージガード・オールラウンド・コンセントレーション・
 	// スキルブースト・キュートフォーカス・クールフォーカス・パッションフォーカス
+	// アンコール・ライフスパークル
 	enum Ability {
 		Score, ComboB, Over, Judge, ComboR, Life, Damage, All,
-		Cons, Skill, CuteF, CoolF, PassionF, None }
+		Cons, Skill, CuteF, CoolF, PassionF, Encore, LSparkle, None }
 }

@@ -4,6 +4,7 @@ using System.Windows;
 using Google.OrTools.LinearSolver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace DrstOpt.Models
 {
@@ -265,6 +266,28 @@ namespace DrstOpt.Models
 				appealValue = solver.Objective().Value();
 				return;
 			}
+		}
+		// データ集計
+		public string CountData() {
+			var haveIdolCardList = DataStore.HaveIdolCardList;
+			var idolCardCount = new Dictionary<string, int>();
+			foreach(var idol in haveIdolCardList) {
+				if (idolCardCount.ContainsKey(idol.IdolName)) {
+					++idolCardCount[idol.IdolName];
+				} else {
+					idolCardCount[idol.IdolName] = 1;
+				}
+			}
+			var idolCardCount2 = new List<KeyValuePair<string, int>>();
+			foreach(var pair in idolCardCount) {
+				idolCardCount2.Add(pair);
+			}
+			idolCardCount2 = idolCardCount2.OrderByDescending(x => x.Value).ToList();
+			string output = "アイドル集計結果：\n";
+			foreach(var pair in idolCardCount2) {
+				output += $"{pair.Key}\t{pair.Value}\n";
+			}
+			return output;
 		}
 		// フォルダパスを参照する
 		public string BrowseSoftwareFolderPath(string startPath) {

@@ -79,15 +79,18 @@
 						IsChecked="{Binding ReadDataOnLoadFlg.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</GroupBox>
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="1" HorizontalAlignment="Center">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
 				<ColumnDefinition/>
+				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Content="DBから読み込み" Width="100" Height="24" Margin="5,5,5,5" HorizontalAlignment="Right"
+			<Button Grid.Column="0" Content="DBから読み込み" Width="100" Height="24" Margin="5,5,5,5"
 				Command="{Binding ReadDataCommand}"/>
-			<Button Grid.Column="1" Content="実行" Width="80" Height="24" Margin="5,5,5,5" HorizontalAlignment="Left"
+			<Button Grid.Column="1" Content="実行" Width="80" Height="24" Margin="5,5,5,5"
 				Command="{Binding OptimizeCommand}"/>
+			<Button Grid.Column="2" Content="集計" Width="80" Height="24" Margin="5,5,5,5"
+				Command="{Binding CountCommand}"/>
 		</Grid>
 		<GroupBox Grid.Row="2" Header="実行ログ">
 			<TextBox Margin="5,5,5,5" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"

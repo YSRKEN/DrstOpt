@@ -72,6 +72,8 @@ namespace DrstOpt.ViewModels
 		public ReactiveCommand ReadDataCommand { get; } = new ReactiveCommand();
 		// 最適化ボタン
 		public ReactiveCommand OptimizeCommand { get; }
+		// 集計ボタン
+		public ReactiveCommand CountCommand { get; }
 
 		private void AddLogText(string text) {
 			LoggingText.Value += text + "\n";
@@ -155,6 +157,12 @@ namespace DrstOpt.ViewModels
 				AddLogText("最適化完了");
 				AddLogText($"属性：{MusicAttributeList[MusicAttributeIndex.Value]}");
 				AddLogText(optimizedLog);
+			});
+			// 集計コマンドについて
+			CountCommand = ReadDataFlg.ToReactiveCommand();
+			CountCommand.Subscribe(_ => {
+				string output = mainModel.CountData();
+				AddLogText(output);
 			});
 			// ソフト起動時にDBを読み込む
 			if (ReadDataOnLoadFlg.Value) {
